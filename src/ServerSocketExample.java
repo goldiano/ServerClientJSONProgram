@@ -31,6 +31,7 @@ class ServerSocketExample {
 
             while ((message = bufferedLocalReader.readLine()) != null) {
                 System.out.println("Message from client: " + message);
+                //printWriter.println("Server is active, wait for command");
 
                 if (message.equalsIgnoreCase("goodbye")) {
                     printWriter.println("Bye Bye");
