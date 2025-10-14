@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -8,35 +7,45 @@ public class ClientSocketV2 {
         final int port = 5000;
         try {
             InetAddress inetAddress = InetAddress.getLocalHost();
-            startConnections(inetAddress,port);
+            startConnections(inetAddress, port);
         } catch (Exception e) {
             System.err.println("Can't get address " + e.getMessage());
         }
     }
 
     private void startConnections(InetAddress inetAddress, int port) {
-        try(Socket clientSocket = new Socket(inetAddress,port)) {
-            SendMessage sendMessage = new SendMessage(clientSocket);
-            CreateMessage createMessage = new CreateMessage();
-            ReadMessage readMessage = new ReadMessage(clientSocket);
+        try (Socket clientSocket = new Socket(inetAddress, port)) {
+            SendMessage sendMessageClient = new SendMessage(clientSocket);
+            CreateMessage createMessageClient = new CreateMessage();
+            ReadMessage readMessageClient = new ReadMessage(clientSocket);
 
-            messageService(sendMessage, readMessage);
-            closeResources(sendMessage, readMessage);
+            messageServiceLoopClient(createMessageClient, sendMessageClient, readMessageClient);
 
         } catch (Exception e) {
             System.err.println("Error in create socket " + e.getMessage());
+
         }
     }
 
-    private void messageService(SendMessage sendMessage, ReadMessage readMessage) {
-        sendMessage.writer("BattleCruiser operational");
+    private void messageServiceLoopClient(CreateMessage createMessage, SendMessage sendMessage, ReadMessage readMessage) {
+        while (true) {
+            messageServiceRead(readMessage);
+            messageServiceSend(sendMessage, createMessage);
+        }
+    }
+
+    private void messageServiceSend(SendMessage sendMessage, CreateMessage createMessage) {
+        sendMessage.writer(createMessage.createM());
+    }
+
+    private void messageServiceRead(ReadMessage readMessage) {
         System.out.println(readMessage.reader());
     }
 
-    private void closeResources(SendMessage sendMessage, ReadMessage readMessage) throws IOException {
-        sendMessage.close();
-        readMessage.close();
+    private void tryToReconnect() {
+
     }
+
     public static void main(String[] args) {
         new ClientSocketV2().getAddress();
     }

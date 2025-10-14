@@ -5,50 +5,39 @@ import java.util.Scanner;
 
 class ServerSocketExample {
     private static final int port = 5000;
-    private void start(int port) {
-        createConnection();
-    }
 
     private void createConnection() {
-        try (ServerSocket serverSocket = new ServerSocket(port);
-             Socket clientSocket = serverSocket.accept()) {
+        try (ServerSocket serverSocket = new ServerSocket(port);) {
 
-            handleCommunication(clientSocket);
+            startCommunicationServer(serverSocket);
 
         } catch (IOException e) {
             System.err.println("Can't create connection" + e.getMessage());
         }
-
     }
 
-    private void handleCommunication(Socket clientSocket) {
-        try (PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-             Scanner scanner = new Scanner(System.in);
-             BufferedReader bufferedLocalReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+    private void startCommunicationServer(ServerSocket serverSocket) {
+        try(Socket clientSocket = serverSocket.accept()) {
 
-            printWriter.println("Server is active, wait for command");
-            String message;
+            ReadMessage readMessageServer = new ReadMessage(clientSocket);
+            SendMessage sendMessageServer = new SendMessage(clientSocket);
 
-            while ((message = bufferedLocalReader.readLine()) != null) {
-                System.out.println("Message from client: " + message);
-                //printWriter.println("Server is active, wait for command");
+            messageServiceLoopServer(readMessageServer,sendMessageServer);
 
-                if (message.equalsIgnoreCase("goodbye")) {
-                    printWriter.println("Bye Bye");
-                    break;
-                }
-                printWriter.println(createMessage(scanner));
-            }
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
-    private String createMessage(Scanner scanner) {
-        return scanner.nextLine();
+    private void messageServiceLoopServer(ReadMessage readMessage, SendMessage sendMessage) {
+        sendMessage.writer("Server start");
+        while(true) {
+            System.out.println(readMessage.reader());
+            sendMessage.writer("Server accepted command");
+        }
     }
 
     public static void main(String[] args) {
-        new ServerSocketExample().start(port);
+        new ServerSocketExample().createConnection();
     }
 }

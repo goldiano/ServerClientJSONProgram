@@ -3,8 +3,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
-class SendMessage{
-    private PrintWriter printWriter;
+class SendMessage implements AutoCloseable {
+    private final PrintWriter printWriter;
 
     SendMessage(Socket clientSocket) throws IOException {
         this.printWriter = new PrintWriter(clientSocket.getOutputStream(),true);
@@ -14,10 +14,8 @@ class SendMessage{
         printWriter.println(message);
     }
 
-    void close() {
-        if(printWriter != null) {
-            printWriter.close();
-        }
+    public void close() {
+        if(printWriter != null) printWriter.close();
     }
 }
 
