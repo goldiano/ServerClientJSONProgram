@@ -5,7 +5,7 @@ class ServerSocket {
     private static final int port = 5000;
 
     private void createConnection() {
-        try (java.net.ServerSocket serverSocket = new java.net.ServerSocket(port);) {
+        try (java.net.ServerSocket serverSocket = new java.net.ServerSocket(port)) {
 
             startCommunicationServer(serverSocket);
 
