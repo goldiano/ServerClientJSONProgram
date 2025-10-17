@@ -1,7 +1,7 @@
 import java.net.InetAddress;
 import java.net.Socket;
 
-public class ClientSocketV2 {
+public class ClientSocket {
 
     private void getAddress() {
         final int port = 5000;
@@ -47,6 +47,6 @@ public class ClientSocketV2 {
     }
 
     public static void main(String[] args) {
-        new ClientSocketV2().getAddress();
+        new ClientSocket().getAddress();
     }
 }

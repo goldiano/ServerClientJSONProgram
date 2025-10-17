@@ -1,13 +1,11 @@
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
-class ServerSocketExample {
+class ServerSocket {
     private static final int port = 5000;
 
     private void createConnection() {
-        try (ServerSocket serverSocket = new ServerSocket(port);) {
+        try (java.net.ServerSocket serverSocket = new java.net.ServerSocket(port);) {
 
             startCommunicationServer(serverSocket);
 
@@ -16,7 +14,7 @@ class ServerSocketExample {
         }
     }
 
-    private void startCommunicationServer(ServerSocket serverSocket) {
+    private void startCommunicationServer(java.net.ServerSocket serverSocket) {
         try(Socket clientSocket = serverSocket.accept()) {
 
             ReadMessage readMessageServer = new ReadMessage(clientSocket);
@@ -30,14 +28,18 @@ class ServerSocketExample {
     }
 
     private void messageServiceLoopServer(ReadMessage readMessage, SendMessage sendMessage) {
+        String msg;
+        GsonCommand gsonCommand = new GsonCommand();
+
         sendMessage.writer("Server start");
         while(true) {
-            System.out.println(readMessage.reader());
-            sendMessage.writer("Server accepted command");
+            msg = readMessage.reader();
+            System.out.println(msg);
+            sendMessage.writer(gsonCommand.chooseCommand(msg));
         }
     }
 
     public static void main(String[] args) {
-        new ServerSocketExample().createConnection();
+        new ServerSocket().createConnection();
     }
 }
