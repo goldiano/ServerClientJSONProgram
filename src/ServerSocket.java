@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import com.google.gson.Gson;
 
 class ServerSocket {
     private static final int port = 5000;
@@ -29,13 +30,15 @@ class ServerSocket {
 
     private void messageServiceLoopServer(ReadMessage readMessage, SendMessage sendMessage) {
         String msg;
+        ServerResponse serverResponse;
         GsonCommand gsonCommand = new GsonCommand();
+        Gson gson = new Gson();
 
         sendMessage.writer("Server start");
         while(true) {
             msg = readMessage.reader();
             System.out.println(msg);
-            sendMessage.writer(gsonCommand.chooseCommand(msg));
+            sendMessage.writer(gson.toJson(new ServerResponse(gsonCommand.chooseCommand(msg))));
         }
     }
 

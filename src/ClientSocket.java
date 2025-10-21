@@ -28,6 +28,7 @@ public class ClientSocket {
     }
 
     private void messageServiceLoopClient(CreateMessage createMessage, SendMessage sendMessage, ReadMessage readMessage) {
+
         while (true) {
             messageServiceRead(readMessage);
             messageServiceSend(sendMessage, createMessage);
