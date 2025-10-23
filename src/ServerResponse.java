@@ -1,10 +1,14 @@
-public class ServerResponse {
+class ServerResponse {
 
     //String status;
-    String message;
+    private String message;
 
     ServerResponse(String message) {
         //this.status = status;
         this.message = message;
+    }
+
+    public String toString() {
+        return message;
     }
 }

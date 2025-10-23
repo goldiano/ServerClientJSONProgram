@@ -14,7 +14,8 @@ class ReadMessage implements AutoCloseable {
 
     String reader() {
         try {
-            return gson.fromJson(bufferedReader.readLine(),ServerResponse.class).toString();
+            ServerResponse serverResponse = gson.fromJson(bufferedReader.readLine(),ServerResponse.class);
+            return serverResponse.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

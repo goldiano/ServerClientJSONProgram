@@ -1,3 +1,5 @@
+import com.google.gson.Gson;
+
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -28,18 +30,19 @@ public class ClientSocket {
     }
 
     private void messageServiceLoopClient(CreateMessage createMessage, SendMessage sendMessage, ReadMessage readMessage) {
-
+        messageServiceRead(readMessage);
         while (true) {
-            messageServiceRead(readMessage);
-            messageServiceSend(sendMessage, createMessage);
+            //messageServiceRead(readMessage,gson, serverResponse);
+            //messageServiceSend(sendMessage, createMessage);
         }
     }
 
     private void messageServiceSend(SendMessage sendMessage, CreateMessage createMessage) {
-        sendMessage.writer(createMessage.createM());
+       // sendMessage.writer(createMessage.createM());
     }
 
     private void messageServiceRead(ReadMessage readMessage) {
+        //ServerResponse serverResponse = (gson.fromJson(readMessage.reader()));
         System.out.println(readMessage.reader());
     }
 

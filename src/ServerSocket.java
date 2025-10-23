@@ -29,16 +29,13 @@ class ServerSocket {
     }
 
     private void messageServiceLoopServer(ReadMessage readMessage, SendMessage sendMessage) {
-        String msg;
-        ServerResponse serverResponse;
-        GsonCommand gsonCommand = new GsonCommand();
-        Gson gson = new Gson();
-
-        sendMessage.writer("Server start");
+        ServerResponse serverResponse = new ServerResponse("Server start");
+        sendMessage.writer(serverResponse);
         while(true) {
-            msg = readMessage.reader();
-            System.out.println(msg);
-            sendMessage.writer(gson.toJson(new ServerResponse(gsonCommand.chooseCommand(msg))));
+//            ServerResponse serverResponse = new ServerResponse(readMessage.reader());
+//            serverResponse = readMessage.reader();
+//            System.out.println(serverResponse.readGsonObject());
+//            sendMessage.writer(gson.toJson(new ServerResponse(gsonCommand.chooseCommand(serverResponse.readGsonObject()))));
         }
     }
 
