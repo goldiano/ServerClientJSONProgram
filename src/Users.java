@@ -1,9 +1,10 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 class Users {
     private int limitMessages;
-    private String nickName;
-    private String password;
+    private static String nickName;
+    private static String password;
     private ArrayList<String> messagesList;
 
     Users(String nickName, String password) {
@@ -18,13 +19,19 @@ class Users {
             messagesList.add(addMessage);
             return "Send message";
         }
-        return "Contact is full";
+        return "Contact email is full";
     }
 
     String readMessage(int numberMessage) {
         if(messagesList.isEmpty()) return "Mail is empty";
-        else return messagesList.get(numberMessage);
+        else
+        {
+            String messageTemp = messagesList.get(numberMessage);
+            messagesList.remove(numberMessage);
+            return messageTemp;
+        }
     }
+
     String numberMessages(int number) {
         if(messagesList.isEmpty()) return "Mail is empty";
         else return "You have " + messagesList.size() + " message\\messages";
@@ -33,5 +40,13 @@ class Users {
     String deleteMessage(int numberMessage) {
         messagesList.remove(numberMessage);
         return "Message deleted";
+    }
+
+    public static String getNickName() {
+        return nickName;
+    }
+
+    public static String getPassword() {
+        return password;
     }
 }

@@ -2,8 +2,9 @@ import com.google.gson.Gson;
 
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Scanner;
 
-public class ClientSocket {
+class ClientSocket {
 
     private void getAddress() {
         final int port = 5000;
@@ -30,24 +31,18 @@ public class ClientSocket {
     }
 
     private void messageServiceLoopClient(CreateMessage createMessage, SendMessage sendMessage, ReadMessage readMessage) {
-        messageServiceRead(readMessage);
         while (true) {
-            //messageServiceRead(readMessage,gson, serverResponse);
-            //messageServiceSend(sendMessage, createMessage);
+            messageServiceRead(readMessage);
+            messageServiceSend(sendMessage,createMessage);
         }
     }
 
     private void messageServiceSend(SendMessage sendMessage, CreateMessage createMessage) {
-       // sendMessage.writer(createMessage.createM());
+       sendMessage.writer(createMessage.createMessage());
     }
 
     private void messageServiceRead(ReadMessage readMessage) {
-        //ServerResponse serverResponse = (gson.fromJson(readMessage.reader()));
         System.out.println(readMessage.reader());
-    }
-
-    private void tryToReconnect() {
-
     }
 
     public static void main(String[] args) {

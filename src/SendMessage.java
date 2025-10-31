@@ -12,10 +12,9 @@ class SendMessage implements AutoCloseable {
         this.printWriter = new PrintWriter(clientSocket.getOutputStream(),true);
     }
 
-    void writer(ServerResponse serverResponse) {
-        Gson gson = new Gson();
-        printWriter.println(gson.toJson(serverResponse));
-        System.out.println(gson.toJson(serverResponse));
+    void writer(String message) {
+        GsonCommand gsonCommand = new GsonCommand();
+        printWriter.println(gsonCommand.convertToGson(message));
     }
 
     public void close() {

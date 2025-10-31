@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
-import com.google.gson.Gson;
+import java.util.Scanner;
+
 
 class ServerSocket {
     private static final int port = 5000;
@@ -21,6 +22,10 @@ class ServerSocket {
             ReadMessage readMessageServer = new ReadMessage(clientSocket);
             SendMessage sendMessageServer = new SendMessage(clientSocket);
 
+            DefaultUsers defaultUsers = new DefaultUsers();
+            defaultUsers.createUsers();
+            if(authenticatorClient(readMessageServer, sendMessageServer) == false) clientSocket.close();
+
             messageServiceLoopServer(readMessageServer,sendMessageServer);
 
         } catch (Exception e) {
@@ -29,14 +34,35 @@ class ServerSocket {
     }
 
     private void messageServiceLoopServer(ReadMessage readMessage, SendMessage sendMessage) {
-        ServerResponse serverResponse = new ServerResponse("Server start");
-        sendMessage.writer(serverResponse);
+        sendMessage.writer("Hello from server");
         while(true) {
-//            ServerResponse serverResponse = new ServerResponse(readMessage.reader());
-//            serverResponse = readMessage.reader();
-//            System.out.println(serverResponse.readGsonObject());
-//            sendMessage.writer(gson.toJson(new ServerResponse(gsonCommand.chooseCommand(serverResponse.readGsonObject()))));
+            String temp = readMessage.reader();
+            System.out.println(temp);
         }
+
+    }
+
+    boolean  authenticatorClient(ReadMessage readMessage, SendMessage sendMessage) {
+        String login;
+        String password;
+        int tryAgain = 0;
+
+        while(true) {
+            sendMessage.writer("Login please: ");
+            login = readMessage.reader();
+            sendMessage.writer("Password please: ");
+            password = readMessage.reader();
+
+            if(login.equals(Users.getNickName()) && password.equals(Users.getPassword())) {
+                return true;
+            }
+            else sendMessage.writer("Wrong login or password");
+            tryAgain++;
+            if(tryAgain > 3) {
+                break;
+            }
+        }
+        return false;
     }
 
     public static void main(String[] args) {
