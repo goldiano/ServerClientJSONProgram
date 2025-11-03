@@ -1,34 +1,26 @@
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
 class CreateMessage implements AutoCloseable{
 
     private final int messageLength;
-    private final InputStreamReader reader;
+    private BufferedReader bufferedReader;
 
     CreateMessage() {
         this.messageLength = 10;
-        this.reader = new InputStreamReader(System.in);
     }
 
     String createMessage() {
-        char[] buffer = new char[messageLength];
+        this.bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         try {
             while(true) {
-                int count = 0;
-                String message;
-
-                count = reader.read(buffer, 0, messageLength);
-                message = new String(buffer, 0, count);
-
-                if(count < messageLength) {
-                    Arrays.fill(buffer,'\0');
+                String message = bufferedReader.readLine();
+                if(message.length() < messageLength) {
                     return message;
                 }
                 else {
                     System.out.println("This message is to long, and can't be send, please repeat");
-                    Arrays.fill(buffer,'\0');
-                    while(reader.ready()) reader.read(); //clean buffer stream
                 }
             }
         } catch (Exception e) {
@@ -38,6 +30,6 @@ class CreateMessage implements AutoCloseable{
 
     @Override
     public void close() throws Exception {
-        if(reader != null) reader.close();
+        if(bufferedReader != null) bufferedReader.close();
     }
 }
