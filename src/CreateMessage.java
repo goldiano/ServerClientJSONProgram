@@ -8,7 +8,7 @@ class CreateMessage implements AutoCloseable{
     private BufferedReader bufferedReader;
 
     CreateMessage() {
-        this.messageLength = 10;
+        this.messageLength = 255;
     }
 
     String createMessage() {

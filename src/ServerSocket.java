@@ -1,7 +1,5 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
-
 
 class ServerSocket {
     private static final int port = 5000;
@@ -19,51 +17,63 @@ class ServerSocket {
     private void startCommunicationServer(java.net.ServerSocket serverSocket) {
         try(Socket clientSocket = serverSocket.accept()) {
 
-            ReadMessage readMessageServer = new ReadMessage(clientSocket);
-            SendMessage sendMessageServer = new SendMessage(clientSocket);
-
             DefaultUsers defaultUsers = new DefaultUsers();
             defaultUsers.createUsers();
-            if(authenticatorClient(readMessageServer, sendMessageServer) == false) clientSocket.close();
 
-            messageServiceLoopServer(readMessageServer,sendMessageServer);
+            messageServiceLoopServer(clientSocket);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void messageServiceLoopServer(ReadMessage readMessage, SendMessage sendMessage) {
-        sendMessage.writer("Hello from server");
-        while(true) {
-            String temp = readMessage.reader();
-            System.out.println(temp);
+    private void messageServiceLoopServer(Socket clientSocket) {
+        boolean checkAuthenticator = false;
+        try {
+            ReadMessage readMessageServer = new ReadMessage(clientSocket);
+            SendMessage sendMessageServer = new SendMessage(clientSocket);
+            Authenticator authenticator = new Authenticator();
+            ServerCommand serverCommand = new ServerCommand();
+
+            //sendMessageServer.writer("Hello from server");
+            checkAuthenticator = authenticator.authenticatorClient(readMessageServer, sendMessageServer);
+
+            if(checkAuthenticator) {
+                while(true) {
+                    sendMessageServer.writer(serverCommand.chooseCommand(readMessageServer.reader()));
+                }
+            }
+            else sendMessageServer.writer("Good bye, the door is closed to you");
+
+
+        } catch (Exception e) {
+            System.err.println("Error in ServiceLoopServer " + e.getMessage());
         }
 
     }
 
-    boolean  authenticatorClient(ReadMessage readMessage, SendMessage sendMessage) {
-        String login;
-        String password;
-        int tryAgain = 0;
-
-        while(true) {
-            sendMessage.writer("Login please: ");
-            login = readMessage.reader();
-            sendMessage.writer("Password please: ");
-            password = readMessage.reader();
-
-            if(login.equals(Users.getNickName()) && password.equals(Users.getPassword())) {
-                return true;
-            }
-            else sendMessage.writer("Wrong login or password");
-            tryAgain++;
-            if(tryAgain > 3) {
-                break;
-            }
-        }
-        return false;
-    }
+//    boolean  authenticatorClient(ReadMessage readMessage, SendMessage sendMessage) {
+//        String login;
+//        String password;
+//        int tryAgain = 0;
+//
+//        while(true) {
+//            sendMessage.writer("Login please: ");
+//            login = readMessage.reader();
+//            sendMessage.writer("Password please: ");
+//            password = readMessage.reader();
+//
+//            if(login.equals(Users.getNickName()) && password.equals(Users.getPassword())) {
+//                return true;
+//            }
+//            else sendMessage.writer("Wrong login or password");
+//            tryAgain++;
+//            if(tryAgain > 3) {
+//                break;
+//            }
+//        }
+//        return false;
+//    }
 
     public static void main(String[] args) {
         new ServerSocket().createConnection();
