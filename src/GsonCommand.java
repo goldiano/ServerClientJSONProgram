@@ -17,7 +17,7 @@ class GsonCommand {
     }
 
     void saveToFile(Users user) {
-        try(FileWriter writer = new FileWriter(user.getNickName() + ".json"))
+        try(FileWriter writer = new FileWriter(user.getName() + ".json"))
         {
             gson.toJson(user, writer);
             System.out.println("Save file");

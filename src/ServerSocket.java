@@ -17,9 +17,6 @@ class ServerSocket {
     private void startCommunicationServer(java.net.ServerSocket serverSocket) {
         try(Socket clientSocket = serverSocket.accept()) {
 
-            DefaultUsers defaultUsers = new DefaultUsers();
-            defaultUsers.createUsers();
-
             messageServiceLoopServer(clientSocket);
 
         } catch (Exception e) {
@@ -28,22 +25,24 @@ class ServerSocket {
     }
 
     private void messageServiceLoopServer(Socket clientSocket) {
-        boolean checkAuthenticator = false;
+        DefaultUsers defaultUsers = new DefaultUsers();
+
         try {
             ReadMessage readMessageServer = new ReadMessage(clientSocket);
             SendMessage sendMessageServer = new SendMessage(clientSocket);
-            Authenticator authenticator = new Authenticator();
+            Authenticator authenticator = new Authenticator(defaultUsers);
             ServerCommand serverCommand = new ServerCommand();
 
-            //sendMessageServer.writer("Hello from server");
-            checkAuthenticator = authenticator.authenticatorClient(readMessageServer, sendMessageServer);
-
-            if(checkAuthenticator) {
+            if(authenticator.authenticatorClient(readMessageServer, sendMessageServer)) {
+                sendMessageServer.writer(serverCommand.chooseCommand("help"));
                 while(true) {
                     sendMessageServer.writer(serverCommand.chooseCommand(readMessageServer.reader()));
                 }
             }
-            else sendMessageServer.writer("Good bye, the door is closed to you");
+            else {
+                sendMessageServer.writer("Good bye, the door is closed to you");
+                clientSocket.close();
+            }
 
 
         } catch (Exception e) {
@@ -51,30 +50,6 @@ class ServerSocket {
         }
 
     }
-
-//    boolean  authenticatorClient(ReadMessage readMessage, SendMessage sendMessage) {
-//        String login;
-//        String password;
-//        int tryAgain = 0;
-//
-//        while(true) {
-//            sendMessage.writer("Login please: ");
-//            login = readMessage.reader();
-//            sendMessage.writer("Password please: ");
-//            password = readMessage.reader();
-//
-//            if(login.equals(Users.getNickName()) && password.equals(Users.getPassword())) {
-//                return true;
-//            }
-//            else sendMessage.writer("Wrong login or password");
-//            tryAgain++;
-//            if(tryAgain > 3) {
-//                break;
-//            }
-//        }
-//        return false;
-//    }
-
     public static void main(String[] args) {
         new ServerSocket().createConnection();
     }

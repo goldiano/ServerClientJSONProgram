@@ -12,11 +12,13 @@ class ServerCommand {
         switch (lineCommand.toLowerCase()) {
             case "mail":
             case "help":
-                return ("""
-                        uptime: Return the server time,
-                        info: Return server version and create time,
-                        help: List of available commands,
-                        mail: check and send your mail, 
+                return (""" 
+                        Welcome to server menu:
+                            uptime: Return the server time,
+                            info: Return server version and create time,
+                            help: List of available commands,
+                            mail: check and send your mail.
+                            Select command: 
                         """);
 
             case "info":
@@ -31,7 +33,7 @@ class ServerCommand {
                         time.toHours(), time.toMinutes(), time.toSeconds());
 
             default:
-                return ("Unknown command");
+                return ("Unknown command, please type help to show menu ");
         }
     }
 

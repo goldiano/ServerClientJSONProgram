@@ -1,14 +1,17 @@
 import java.util.ArrayList;
+import java.util.List;
 
 class Users {
     private int limitMessages;
-    private static String nickName;
-    private static String password;
-    private ArrayList<String> messagesList;
+    private String nickName;
+    private String password;
+    private boolean isAdmin;
+    private List<String> messagesList;
 
-    Users(String nickName, String password) {
+    Users(String nickName, String password, boolean isAdmin) {
         this.nickName = nickName;
         this.password = password;
+        this.isAdmin = isAdmin;
         this.limitMessages = 5;
         this.messagesList = new ArrayList<>();
     }
@@ -41,11 +44,11 @@ class Users {
         return "Message deleted";
     }
 
-    public static String getNickName() {
+    public String getName() {
         return nickName;
     }
 
-    public static String getPassword() {
+    public String getPass() {
         return password;
     }
 }

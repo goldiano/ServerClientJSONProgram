@@ -1,10 +1,11 @@
-import com.google.gson.Gson;
-
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class ClientSocket {
+
+    ReadMessage readMessageClient;
 
     private void getAddress() {
         final int port = 5000;
@@ -20,9 +21,9 @@ class ClientSocket {
         try (Socket clientSocket = new Socket(inetAddress, port)) {
             SendMessage sendMessageClient = new SendMessage(clientSocket);
             CreateMessage createMessageClient = new CreateMessage();
-            ReadMessage readMessageClient = new ReadMessage(clientSocket);
+            this.readMessageClient = new ReadMessage(clientSocket);
 
-            messageServiceLoopClient(createMessageClient, sendMessageClient, readMessageClient);
+            messageServiceLoopClient(createMessageClient, sendMessageClient);
 
         } catch (Exception e) {
             System.err.println("Error in create socket " + e.getMessage());
@@ -30,9 +31,11 @@ class ClientSocket {
         }
     }
 
-    private void messageServiceLoopClient(CreateMessage createMessage, SendMessage sendMessage, ReadMessage readMessage) {
+    private void messageServiceLoopClient(CreateMessage createMessage, SendMessage sendMessage) {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(new IncomingMessage());
+
         while (true) {
-            messageServiceRead(readMessage);
             messageServiceSend(sendMessage,createMessage);
         }
     }
@@ -45,6 +48,16 @@ class ClientSocket {
         System.out.println(readMessage.reader());
     }
 
+    class IncomingMessage implements Runnable {
+
+        @Override
+        public void run() {
+            while(true) {
+                messageServiceRead(readMessageClient);
+            }
+
+        }
+    }
     public static void main(String[] args) {
         new ClientSocket().getAddress();
     }
