@@ -18,10 +18,10 @@ class DefaultUsers {
         gsonCommand.saveToFile(yabadabadoo);
     }
 
-    Users findByName(String name) {
+    boolean findByName(String name, String password) {
         for(Users i : usersChat) {
-            if(i.getName().equalsIgnoreCase(name)) return i;
+            if(i.getName().equals(name) && i.getPass().equals(password)) return true;
         }
-        return null;
+        return false;
     }
 }

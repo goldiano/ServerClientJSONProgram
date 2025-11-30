@@ -17,15 +17,17 @@ public class Authenticator {
             password = readMessage.reader();
 
 
-            Users user = defaultUsers.findByName(login);
-            if (user == null) {
+            if (defaultUsers.findByName(login, password)) {
+                return true;
+            } else {
                 sendMessage.writer("Wrong login or password");
                 tryAgain++;
-                if (tryAgain >= 3) {
-                    sendMessage.writer("Close connection");
-                }
+            }
+
+            if (tryAgain == 3) {
+                sendMessage.writer("Close connection");
                 return false;
-            } else return user.getPass().equals(password);
+            }
         }
     }
 }
